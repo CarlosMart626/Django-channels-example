@@ -1,0 +1,29 @@
+version: '2'
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    build: ./nginx
+    ports:
+     - "80:80"
+    links:
+     - web:web
+    volumes_from:
+     - web
+
+  web:
+    container_name: web
+    build: ./django_web
+    links:
+     - redis:redis
+    volumes:
+     - /tmp/var/www/django/media:/usr/src/app/media
+     - /tmp/var/www/django/static:/var/www/django/static
+    ports:
+     - 8000:8000
+    command:
+     - ./run.sh
+
+  redis:
+    container_name: redis
+    image: redis:3.2.11
